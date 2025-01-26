@@ -20,7 +20,7 @@ CKEDITOR.editorConfig = function (config) {
             ]},
     ];
 
-    let sizeHe = window.innerHeight-120;
+    let sizeHe = window.innerHeight-130;
 
     config.extraPlugins = 'autogrow';
     config.autoGrow_minHeight = 250;

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script>
+    function captureLog(msg) { window.webkit.messageHandlers.EditorHTML.postMessage(msg); }
+    window.console.log = captureLog;
+    const _callback = function(message) {
+      window.webkit.messageHandlers.EditorHTML.postMessage(message);
+    };
+
+    window.addEventListener('load', function() {
+      _callback('ready');
+    });
+  </script>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <meta name="supported-color-schemes" content="light dark"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <link rel="icon" href="js/ckeditor/skins/moono-lisa/icons.png" type="image/png">
+  <!-- Обновленные пути к ресурсам -->
+  <link rel="stylesheet" type="text/css" href="js/ckeditor/skins/moono-lisa/editor.css">
+  <script type="text/javascript" src="js/ckeditor/ckeditor.js"></script>
+  <script type="text/javascript" src="js/ckeditor/config.js"></script>
+  <script type="text/javascript" src="js/ckeditor/lang/ru.js"></script>
+  <script type="text/javascript" src="js/ckeditor/styles.js"></script>
+  <link rel="stylesheet" type="text/css" href="js/ckeditor/plugins/scayt/skins/moono-lisa/scayt.css">
+  <link rel="stylesheet" type="text/css" href="js/ckeditor/plugins/scayt/dialogs/dialog.css">
+  <link rel="stylesheet" type="text/css" href="js/ckeditor/plugins/wsc/skins/moono-lisa/wsc.css">
+  <link rel="stylesheet" type="text/css" href="js/ckeditor/plugins/copyformatting/styles/copyformatting.css">
+  <link rel="stylesheet" type="text/css" href="js/ckeditor/skins/moono-lisa/dialog.css">
+  <script>
+    window.onload = function() {
+      CKEDITOR.replace('editor1', {
+        language: 'ru',
+        // Additional configuration
+      });
+    };
+  </script>
+</head>
+
+<body>
+<textarea name="editor1" id="editor1" rows="10" cols="80"></textarea>
+</body>
+</html>

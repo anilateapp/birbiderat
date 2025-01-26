@@ -2,12 +2,6 @@
 <html>
 <head>
   <script>
-    function captureLog(msg) { window.webkit.messageHandlers.EditorHTML.postMessage(msg); }
-    window.console.log = captureLog;
-    const _callback = function(message) {
-      window.webkit.messageHandlers.EditorHTML.postMessage(message);
-    };
-
     window.addEventListener('load', function() {
       _callback('ready');
     });
@@ -37,7 +31,6 @@
     };
   </script>
 </head>
-
 <body>
 <textarea name="editor1" id="editor1" rows="10" cols="80"></textarea>
 </body>

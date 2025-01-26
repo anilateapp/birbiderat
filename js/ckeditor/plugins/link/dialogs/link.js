@@ -121,7 +121,7 @@
                         }], setup: function () {
                             this.getDialog().getContentElement("info", "linkType") || this.getElement().show()
                         }
-                    }, {type: "button", id: "browse", hidden: "true", filebrowser: "info:url", label: g.browseServer}]
+                    }]//, {type: "button", id: "browse", hidden: "true", filebrowser: "info:url", label: g.browseServer}
                 }, {
                     type: "vbox", id: "anchorOptions", width: 260, align: "center", padding: 0, children: [{
                         type: "fieldset", id: "selectAnchorText",
@@ -341,8 +341,7 @@
                     id: "uploadButton",
                     label: g.uploadSubmit,
                     filebrowser: "info:url",
-                    "for": ["upload",
-                        "upload"]
+                    "for": ["upload", "upload"]
                 }]
             }, {
                 id: "advanced", label: b.advanced, title: b.advanced, elements: [{
@@ -476,10 +475,13 @@
                     c = this.getContentElement("info", "linkDisplayText").getElement().getParent().getParent(),
                     f = n.getSelectedLink(a, !0), h = f[0] || null;
                 // Проверяем, есть ли выбранная ссылка и выводим информацию
+                console.log("link");
                 if (h) {
                     console.log("Выбранный элемент ссылки: ", h);
+                    console.log(`Выбранный элемент ссылки: ${h.getAttribute}`);
                     if (h.hasAttribute("href")) {
-                        console.log("Ссылка (href): ", h.getAttribute("href"));
+                        console.log(`Ссылка (href): ${h.getAttribute("href")}`);
+                        console.log(`C`, c);
                     } else {
                         console.log("Ссылка не имеет атрибута href.");
                     }
@@ -494,48 +496,102 @@
                 this.setupContent(b)
             },
             onOk: function () {
+// Создаем пустой объект для хранения атрибутов ссылки
                 var a = {};
+// Коммитим содержимое (вероятно, данные, связанные с ссылкой)
                 this.commitContent(a);
+
+// Проверяем, есть ли выбранные элементы
                 if (this._.selectedElements.length) {
-                    var b =
-                        this._.selectedElements, g = n.getLinkAttributes(c, a), f = [], h, d, l, e, k;
+                    // Получаем выбранные элементы
+                    var b = this._.selectedElements,
+                        // Получаем атрибуты ссылки из контекста и объекта a
+                        g = n.getLinkAttributes(c, a),
+                        f = [], // Массив для хранения диапазонов
+                        h, d, l, e, k;
+
+                    // Проходим по каждому выбранному элементу
                     for (k = 0; k < b.length; k++) {
-                        h = b[k];
-                        d = h.data("cke-saved-href");
-                        l = h.getHtml();
+                        h = b[k]; // Текущий элемент
+                        d = h.data("cke-saved-href"); // Сохраняем предыдущий href
+                        l = h.getHtml(); // Получаем HTML-код элемента
+                        // Устанавливаем новые атрибуты
                         h.setAttributes(g.set);
+                        // Убираем атрибуты, которые нужно удалить
                         h.removeAttributes(g.removed);
-                        if (a.linkText && q != a.linkText) e = a.linkText; else if (d == l || "email" == a.type && -1 != l.indexOf("@")) e = "email" == a.type ? a.email.address : g.set["data-cke-saved-href"];
+
+                        // Определяем текст ссылки
+                        if (a.linkText && q != a.linkText)
+                            e = a.linkText;
+                        else if (d == l || "email" == a.type && -1 != l.indexOf("@"))
+                            e = "email" == a.type ? a.email.address : g.set["data-cke-saved-href"];
+
+                        // Если текст ссылки определен, устанавливаем его
                         e && h.setText(e);
-                        f.push(t(c, h))
+                        // Добавляем диапазон текущего элемента в массив
+                        f.push(t(c, h));
                     }
+
+                    // Выбираем диапазоны в редакторе
                     c.getSelection().selectRanges(f);
-                    delete this._.selectedElements
+                    // Очищаем выбранные элементы
+                    delete this._.selectedElements;
                 } else {
+                    // Если нет выбранных элементов, получаем атрибуты ссылки
                     b = n.getLinkAttributes(c, a);
+                    // Получаем диапазоны выделения
                     g = c.getSelection().getRanges();
+                    // Создаем новый стиль для ссылки
                     f = new CKEDITOR.style({element: "a", attributes: b.set});
-                    h = [];
-                    f.type = CKEDITOR.STYLE_INLINE;
+                    h = []; // Массив для хранения диапазонов
+                    f.type = CKEDITOR.STYLE_INLINE; // Устанавливаем тип стиля как инлайн
+
+                    // Проходим по каждому диапазону
                     for (l = 0; l < g.length; l++) {
-                        d = g[l];
-                        d.collapsed ? (e = new CKEDITOR.dom.text(a.linkText || ("email" == a.type ? a.email.address : b.set["data-cke-saved-href"]), c.document), d.insertNode(e), d.selectNodeContents(e)) : q !== a.linkText && (e = new CKEDITOR.dom.text(a.linkText, c.document), d.shrink(CKEDITOR.SHRINK_TEXT), c.editable().extractHtmlFromRange(d), d.insertNode(e));
+                        d = g[l]; // Текущий диапазон
+                        // Если диапазонCollapsed, вставляем новый текст
+                        d.collapsed ?
+                            (e = new CKEDITOR.dom.text(a.linkText || ("email" == a.type ? a.email.address : b.set["data-cke-saved-href"]), c.document),
+                                d.insertNode(e),
+                                d.selectNodeContents(e))
+                            :
+                            // Если текст ссылки отличается, обновляем его
+                            q !== a.linkText && (e = new CKEDITOR.dom.text(a.linkText, c.document),
+                                d.shrink(CKEDITOR.SHRINK_TEXT),
+                                c.editable().extractHtmlFromRange(d),
+                                d.insertNode(e));
+
+                        // Удаляем все ссылки из текущего диапазона
                         e = d._find("a");
-                        for (k = 0; k < e.length; k++) e[k].remove(!0);
-                        f.applyToRange(d,
-                            c);
-                        h.push(d)
+                        for (k = 0; k < e.length; k++)
+                            e[k].remove(!0);
+
+                        // Применяем стиль к диапазону
+                        f.applyToRange(d, c);
+                        // Добавляем диапазон в массив
+                        h.push(d);
                     }
-                    c.getSelection().selectRanges(h)
+
+                    // Выбираем диапазоны в редакторе
+                    c.getSelection().selectRanges(h);
                 }
             },
             onLoad: function () {
+                // Скрываем вкладку "advanced", если настройка linkShowAdvancedTab выключена
                 c.config.linkShowAdvancedTab || this.hidePage("advanced");
-                c.config.linkShowTargetTab || this.hidePage("target")
+                // Скрываем вкладку "target", если настройка linkShowTargetTab выключена
+                c.config.linkShowTargetTab || this.hidePage("target");
             },
+
             onFocus: function () {
+                // Получаем элемент контента для типа ссылки
                 var a = this.getContentElement("info", "linkType");
-                a && "url" == a.getValue() && (a = this.getContentElement("info", "url"), a.select())
+                // Если элемент существует и тип ссылки равен "url"
+                a && "url" == a.getValue() && (
+                    // Получаем элемент контента для URL и выбираем его
+                    a = this.getContentElement("info", "url"),
+                        a.select()
+                );
             }
         }
     })
